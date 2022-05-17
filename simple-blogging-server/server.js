@@ -26,14 +26,13 @@ function commonCallBack(path){
 function main(request, response){
     var path = request.url
     var parsedUrl = url.parse(request.url, true)
-
     if(path === '/api/blog' && verifyJwt(request) && request.method === 'GET'){
         commonCallBack(path)
         getAllPosts(request,response,db)
     }
-    else if(path.match(/\/api\/blog\/([0-9]+)/) && verifyJwt(request) && request.method === 'GET'){
+    else if(parsedUrl.pathname === '/api/blog' && typeof parsedUrl.query.id !== 'undefined' && verifyJwt(request) && request.method === 'GET'){
         commonCallBack(path)
-        const id = path.split('/').pop()
+        const id = parsedUrl.query.id
         getPostById(request,response,db,id)
     }
     else if(path === '/api/blog/create' && verifyJwt(request) && request.method === 'POST'){

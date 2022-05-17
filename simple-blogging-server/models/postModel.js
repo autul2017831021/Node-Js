@@ -5,6 +5,10 @@ const { findById } = require("../database/repository/post/findById")
 const { getStatusModel } = require("./statusModel")
 const { getUserModel } = require("./userModel")
 
+const mongoPostFindAll = require("../database/mongo-repository/post/findAll")
+const mongoCreatePost = require("../database/mongo-repository/post/create")
+const mongoPostFindById = require("../database/mongo-repository/post/findById")
+
 const postModel = {
     id     : Number,
     title  : String,
@@ -42,7 +46,8 @@ async function findAllPosts(db){
         status : newStatusModel,
         posts  : []
     }
-    const allPosts = await findAll(db,JSON.stringify(newAllPostsModel))
+    //const allPosts = await findAll(db,JSON.stringify(newAllPostsModel))
+    const allPosts = await mongoPostFindAll.findAll(db,JSON.stringify(newAllPostsModel))
     return allPosts
 }
 async function findPostById(db,id){
@@ -52,7 +57,8 @@ async function findPostById(db,id){
         status : newStatusModel,
         posts  : []
     }
-    const singlePost = await findById(db,id,JSON.stringify(newSinglePostsModel))
+    //const singlePost = await findById(db,id,JSON.stringify(newSinglePostsModel))
+    const singlePost = await mongoPostFindById.findById(db,id,JSON.stringify(newSinglePostsModel))
     return singlePost
 }
 async function storePost(db,data,userInfo){
@@ -70,7 +76,8 @@ async function storePost(db,data,userInfo){
         body   : data.body,
         userId : userInfo.id
     }
-    const newPost = await create(db,queryData,JSON.stringify(newCreatePostModel))
+    //const newPost = await create(db,queryData,JSON.stringify(newCreatePostModel))
+    const newPost = await mongoCreatePost.create(db,queryData,JSON.stringify(newCreatePostModel))
     return newPost
 }
 async function assignUser(db,data,userInfo){

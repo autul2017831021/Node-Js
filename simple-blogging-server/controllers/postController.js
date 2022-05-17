@@ -8,7 +8,7 @@ async function getAllPosts(request, response, db){
 }
 
 async function getPostById(request, response, db, id){
-    var singlePost = await findPostById(db,parseInt(id) )
+    var singlePost = await findPostById(db,id)
     commonResponse(response,singlePost,'application/json')
 }
 
