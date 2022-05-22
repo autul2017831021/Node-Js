@@ -37,7 +37,6 @@ function validate(dbo, collectionName, values, paramObject, field, ifValid){
             if (err)
                 reject(err)
             else{
-                console.log(result)
                 if(result.length > 0){
                     paramObject[field] = ifValid
                     resolve(paramObject)
