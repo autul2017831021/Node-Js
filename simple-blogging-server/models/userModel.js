@@ -1,5 +1,9 @@
 const { create } = require("../database/repository/user/create")
 const { verify } = require("../database/repository/user/verify")
+// mongo functions import
+const MongoCreateUser = require("../database/mongo-repository/user/create")
+const MongoVerifyUser = require("../database/mongo-repository/user/verify")
+
 const { hash } = require("../helpers/utility")
 const { getStatusModel } = require("./statusModel")
 
@@ -70,7 +74,8 @@ async function createUser(db,data){
         user     : newUserModel,
         password : null
     }
-    const newUser = await create(db,newCredentials,JSON.stringify(newCreateUserModel))
+    // const newUser = await create(db,newCredentials,JSON.stringify(newCreateUserModel))
+    const newUser = await MongoCreateUser.create(db,newCredentials,JSON.stringify(newCreateUserModel))
     return newUser
 }
 
@@ -85,7 +90,8 @@ async function verifyUser(db,data){
         user   : newUserModel,
         token  : null
     }
-    const user = await verify(db,newCredentials,JSON.stringify(newVerifyUserModel))
+    //const user = await verify(db,newCredentials,JSON.stringify(newVerifyUserModel))
+    const user = await MongoVerifyUser.verify(db,newCredentials,JSON.stringify(newVerifyUserModel))
     return user
 }
 
