@@ -1,11 +1,10 @@
 const { isEmptyObject } = require("../../../helpers/utility")
 const mysql = require('mysql')
 
-function find(db,model){
+function find(db,sql,values,model){
     model = JSON.parse(model)
     return new Promise(function(resolve,reject){
-        const sql = searchByUsername(model.user.username)
-        db.query(sql,function(err, result, fields){
+        db.query(sql,values,function(err, result, fields){
             if (err)
                 reject(new Error("Error in find-user DB query"))
             else{
@@ -21,22 +20,41 @@ function find(db,model){
                 }
                 else{
                     model.status.message = "User Does Not Exist"
+                    model.user.id = null
+                    model.user.name = null
+                    model.user.email = null
                     model.user.username = null
+                    model.user.phone = null
                 }
                 resolve(model)
             }    
         })
     })
 }
-function searchByID(id){
-    return 'SELECT * FROM users WHERE users='+mysql.escape(id)
+async function searchByID(db,model){
+    const parsedModel = JSON.parse(model)
+    const id = parsedModel.user.id 
+    const sql = 'SELECT * FROM `users` WHERE `id` = ?'
+    const result = await find(db,sql,id,model)
+    return result
 }
-function searchByEmail(email){
-    return 'SELECT * FROM users WHERE users='+mysql.escape(email)
+async function searchByEmail(db,model){
+    const parsedModel = JSON.parse(model)
+    const email = parsedModel.user.email 
+    const sql = 'SELECT * FROM `users` WHERE `email` = ?'
+    const result = await find(db,sql,email,model)
+    return result
 }
-function searchByUsername(username){
-    return 'SELECT * FROM users WHERE username='+mysql.escape(username)
+async function searchByUsername(db,model){
+    const parsedModel = JSON.parse(model)
+    const username = parsedModel.user.username
+    const sql = 'SELECT * FROM `users` WHERE `username` = ?'
+    const result = await find(db,sql,username,model)
+    return result
 }
 module.exports = {
-    find
+    find,
+    searchByID,
+    searchByEmail,
+    searchByUsername
 }

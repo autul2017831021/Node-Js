@@ -10,6 +10,7 @@ const { notFound, forbidden, invalidToken } = require('./controllers/errorHandle
 const { base64decode } = require('./helpers/utility.js')
 const { getUserProfile, updateUserProfile } = require('./controllers/userController.js')
 const { updateProfileAuth } = require('./helpers/role.js')
+const { validateJwt } = require('./middleware/auth/validateJwt.js')
 
 const port = 8080
 
@@ -24,44 +25,44 @@ function commonCallBack(path){
     console.log( getDate(new Date()) )
 }
 
-function main(request, response){
+async function main(request, response){
     var path = request.url
     var parsedUrl = url.parse(request.url, true)
-    if(path === '/api/blog/get' && verifyJwt(request) && request.method === 'GET'){
+    if(path === '/api/blog/get' && verifyJwt(request) && await validateJwt(db,request) && request.method === 'GET'){
         commonCallBack(path)
         getAllPosts(request,response,db)
     }
-    else if(parsedUrl.pathname === '/api/blog/get' && typeof parsedUrl.query.id !== 'undefined' && verifyJwt(request) && request.method === 'GET'){
+    else if(parsedUrl.pathname === '/api/blog/get' && typeof parsedUrl.query.id !== 'undefined' && verifyJwt(request) && await validateJwt(db,request) && request.method === 'GET'){
         commonCallBack(path)
         const id = parsedUrl.query.id
         getPostById(request,response,db,id)
     }
-    else if(path === '/api/blog/create' && verifyJwt(request) && request.method === 'POST'){
+    else if(path === '/api/blog/create' && verifyJwt(request) && await validateJwt(db,request) && request.method === 'POST'){
         commonCallBack(path)
         const payload = request.headers.authorization.split(' ')[1].split('.')[1]
         const userInfo = JSON.parse(base64decode(payload))
         createPost(request,response,db,userInfo)
     }
-    else if(parsedUrl.pathname === '/api/blog/update' && typeof parsedUrl.query.id !== 'undefined' && verifyJwt(request) && request.method === 'PUT'){
+    else if(parsedUrl.pathname === '/api/blog/update' && typeof parsedUrl.query.id !== 'undefined' && verifyJwt(request) && await validateJwt(db,request) && request.method === 'PUT'){
         commonCallBack(path)
         const id = parsedUrl.query.id
         const payload = request.headers.authorization.split(' ')[1].split('.')[1]
         const userInfo = JSON.parse(base64decode(payload))
         updatePostById(request,response,db,userInfo,id)
     }
-    else if(parsedUrl.pathname === '/api/blog/delete' && typeof parsedUrl.query.id !== 'undefined' && verifyJwt(request) && request.method === 'DELETE'){
+    else if(parsedUrl.pathname === '/api/blog/delete' && typeof parsedUrl.query.id !== 'undefined' && verifyJwt(request) && await validateJwt(db,request) && request.method === 'DELETE'){
         commonCallBack(path)
         const id = parsedUrl.query.id
         const payload = request.headers.authorization.split(' ')[1].split('.')[1]
         const userInfo = JSON.parse(base64decode(payload))
         deletePostById(request,response,db,userInfo,id)
     }
-    else if(parsedUrl.pathname === '/api/profile/get' && typeof parsedUrl.query.username !== 'undefined' && verifyJwt(request) && request.method === 'GET'){
+    else if(parsedUrl.pathname === '/api/profile/get' && typeof parsedUrl.query.username !== 'undefined' && verifyJwt(request) && await validateJwt(db,request) && request.method === 'GET'){
         commonCallBack(path)
         const username = parsedUrl.query.username
         getUserProfile(request,response,db,username)
     }
-    else if(parsedUrl.pathname === '/api/profile/update' && typeof parsedUrl.query.username !== 'undefined' && verifyJwt(request) && updateProfileAuth(request,parsedUrl.query.username) && request.method === 'PUT'){
+    else if(parsedUrl.pathname === '/api/profile/update' && typeof parsedUrl.query.username !== 'undefined' && verifyJwt(request) && await validateJwt(db,request) && updateProfileAuth(request,parsedUrl.query.username) && request.method === 'PUT'){
         commonCallBack(path)
         const payload = request.headers.authorization.split(' ')[1].split('.')[1]
         const userInfo = JSON.parse(base64decode(payload))
@@ -75,7 +76,7 @@ function main(request, response){
         commonCallBack(path)
         register(request,response,db)
     }
-    else if(verifyJwt(request)){
+    else if(verifyJwt(request) && await validateJwt(db,request)){
         commonCallBack(path)
         notFound(request,response)
     }

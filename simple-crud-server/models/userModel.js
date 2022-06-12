@@ -1,5 +1,5 @@
 const { create } = require("../database/repository/user/create")
-const { find } = require("../database/repository/user/find")
+const { searchByUsername } = require("../database/repository/user/find")
 const { findProfile } = require("../database/repository/user/findProfile")
 const { update } = require("../database/repository/user/update")
 const { verify } = require("../database/repository/user/verify")
@@ -117,7 +117,7 @@ async function getProfile(db,userData){
         lastPosted  : null,
         totalPosts  : 0
     }
-    const userExists = await find(db,JSON.stringify(newUserProfileModel))
+    const userExists = await searchByUsername(db,JSON.stringify(newUserProfileModel))
     if(!userExists.status.success)return userExists
     newUserProfileModel.user.id         = userExists.user.id
     newUserProfileModel.user.name       = userExists.user.name
