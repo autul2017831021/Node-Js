@@ -19,3 +19,13 @@ create table posts(
     PRIMARY KEY (`id`),
     INDEX par_ind (user_id ASC),
     CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE);
+
+create table comments(
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    body TEXT NULL DEFAULT NULL,
+    post_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    created_at DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT fk_posts FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_users_comments FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE);
