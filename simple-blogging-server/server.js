@@ -10,7 +10,7 @@ const { notFound, forbidden, invalidToken } = require('./controllers/errorHandle
 const { base64decode } = require('./helpers/utility.js')
 const { createComment, getCommentsByPostId } = require('./controllers/commentController.js')
 
-const port = 8080
+const port = 8082
 
 function getDate(dateObj){
     return 'Request Time : '+getApiReqResTime(dateObj)
