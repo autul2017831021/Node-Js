@@ -1,3 +1,6 @@
 simple-blogging-server/node_modules/
-simple-crud-server/node_modules/
+Write-and-Share/node_modules/
 prep-hub-server/node_modules/
+simple-blogging-server/package-lock.json
+Write-and-Share/package-lock.json
+prep-hub-server/package-lock.json
